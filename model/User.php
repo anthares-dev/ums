@@ -31,6 +31,31 @@ function getUser(int $id)
 
 }
 
+function getUserByEmail(string $email)
+{
+
+    $conn = $GLOBALS['mysqli'];
+    $result = [];
+
+    $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+    if (!$email) {
+        return $result;
+    }
+    $email = mysqli_escape_string($conn, $email);
+
+    $sql = "SELECT * FROM users WHERE email = '$email'";
+    //echo $sql;
+    $res = $conn->query($sql);
+
+    // se ce un risultato e ci sono righe allora faccio un fetch
+    if ($res && $res->num_rows) {
+        $result = $res->fetch_assoc();
+    }
+
+    return $result;
+
+}
+
 function storeUser(array $data, int $id)
 {
     $result = [
@@ -45,7 +70,24 @@ function storeUser(array $data, int $id)
     $age = $conn->escape_string($data['age']);
     $avatar = $conn->escape_string($data['avatar']);
 
-    $sql = "UPDATE users SET username='$username', email='$email', fiscalcode='$fiscalcode', age='$age', avatar = '$avatar' WHERE id='$id'";
+    $sql = "UPDATE users SET username='$username', email='$email', fiscalcode='$fiscalcode', age='$age', avatar = '$avatar'";
+
+    if ($data['password']) {
+        echo $data['password'];
+        $data['password'] = $data['password'] ?? 'testuser';
+        $password = password_hash($data['password'], PASSWORD_DEFAULT);
+
+        $sql .= ", password ='$password'";
+    }
+
+    if ($data['roletype']) {
+        $roletype = in_array($data['roletype'], getConfig('roletypes', [])) ? $data['roletype'] : 'user';
+
+        $sql .= ", roletype ='$roletype'";
+    }
+
+    $sql .= " WHERE id='$id'";
+    //print_r($data);
     //echo $sql;die;
 
     $res = $conn->query($sql);
@@ -77,8 +119,11 @@ function saveUser(array $data)
     $email = $conn->escape_string($data['email']);
     $fiscalcode = $conn->escape_string($data['fiscalcode']);
     $age = (INT) $data['age'];
+    $data['password'] = $data['password'] ?? 'testuser';
+    $password = password_hash($data['password'], PASSWORD_DEFAULT);
+    $roletype = in_array($data['roletype'], getConfig('roletypes', [])) ? $data['roletype'] : 'user';
 
-    $sql = "INSERT INTO users (username, email, fiscalcode, age) VALUES('$username', '$email', '$fiscalcode', '$age')";
+    $sql = "INSERT INTO users (username, email, fiscalcode, age, password, roletype) VALUES('$username', '$email', '$fiscalcode', '$age', '$password', '$roletype')";
     //echo $sql;die;
 
     $res = $conn->query($sql);

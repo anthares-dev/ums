@@ -23,7 +23,7 @@ return [
     'recordsPerPage' => 10,
     'recordsPerPageOptions' => [5, 10, 20, 50, 100],
     'orderByColumns' => [
-        'id', 'email', 'fiscalcode', 'age', 'username',
+        'id', 'email', 'fiscalcode', 'age', 'username', 'roletype',
     ],
     'numLinkNavigator' => 5,
     'maxFileUpload' => $maxUpload,
@@ -31,6 +31,7 @@ return [
     'webAvatarDir' => '/avatar/',
     'thumbNail_width' => 200,
     'previewImg_width' => 600,
+    'roletypes' => ['user', 'editor', 'admin'],
 ];
 
 //const MAX_FILE_SIZE = 3000000000;

@@ -1,9 +1,21 @@
 <?php
+session_start();
+require_once 'functions.php';
+if (!isUserLoggedin()) {
+    header('Location: login.php');
+    exit;
+}
+
+if (!userCanUpdate()) {
+    header('Location: index.php');
+    exit;
+}
+
 require_once 'headerInclude.php';
 ?>
 <main role="main" class="flex-shrink-0">
     <div class="container">
-        <h1 class="mt-5 text-center p-">USER MANAGEMENT SYSTEM</h1>
+        <h2 class="mt-5">UPDATE USER</h2>
 
         <?php
 
@@ -28,6 +40,8 @@ if ($id) {
         'age' => '',
         'email' => '',
         'avatar' => '',
+        'password' => '',
+        'roletype' => 'user',
     ];
 }
 

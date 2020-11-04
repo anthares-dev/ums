@@ -1,3 +1,6 @@
+<!-- <h2 class="mt-5">UPDATE RECORD</h2> -->
+
+
 <?php
 session_start();
 
@@ -13,6 +16,9 @@ $queryString = http_build_query($params);
 switch ($action) {
     case 'delete':
 
+        if (!userCanDelete()) {
+            break;
+        }
         $id = getParam('id', 0);
         $userData = getUser($id);
         $res = delete($id);
@@ -26,7 +32,9 @@ switch ($action) {
         break;
 
     case 'save':
-
+        if (!userCanUpdate()) {
+            break;
+        }
         $data = $_POST;
         $res = saveUser($data);
         if ($res['id'] > 0) {
@@ -48,7 +56,9 @@ switch ($action) {
         break;
 
     case 'store':
-
+        if (!userCanUpdate()) {
+            break;
+        }
         $data = $_POST;
         $id = getParam('id', 0);
 

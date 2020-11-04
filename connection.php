@@ -23,6 +23,6 @@ unset($config);
 if ($mysqli->connect_error) {
     die($sqli->connect_error);
 } else {
-    echo 'Connessione riuscita';
+    //echo 'Connessione riuscita';
     //var_dump($mysqli);
 }

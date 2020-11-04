@@ -1,3 +1,8 @@
+<?php
+//echo password_hash('testfulvio', PASSWORD_DEFAULT);
+
+?>
+
 <form enctype="multipart/form-data" id="updateForm" action="controller/updateRecord.php?<?=$defaultParams?>"
     method="post">
     <div class="form-group row">
@@ -15,6 +20,28 @@
         <div class="col-sm-10">
             <input type="email" class="form-control form-control-lg" name="email" id="email" placeholder="Email"
                 value="<?=$user['email']?>" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="password" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control form-control-lg" name="password" id="password"
+                placeholder="Password" value="">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="roletype" class="col-sm-2 col-form-label">Role</label>
+        <div class="col-sm-10">
+            <select name="roletype" id="roletype" class="form-control">
+                <?php
+foreach (getConfig('roletypes', []) as $role):
+    $sel = $user['roletype'] === $role ? 'selected' : '';
+    echo "\n<option $sel value='$role' >$role</option>'";
+
+endforeach;
+?>
+            </select>
+
         </div>
     </div>
     <div class="form-group row">
@@ -36,10 +63,11 @@
         <label for="avatar" class="col-sm-2 col-form-label">Avatar</label>
         <div class="col-sm-10">
             <input type="hidden" name="MAX_FILE_SIZE" value="<?=getConfig('maxFileUpload')?>" />
-            <input onchange="previewFile()" type="file" class="form-control form-control-lg" name="avatar" id="avatar"
-                accept="image/*" required />
+            <input onchange="previewFile()" type="file" class="form-control-file form-control-lg" name="avatar"
+                id="avatar" accept="image/*" />
         </div>
     </div>
+
 
     <div class="form-group row">
         <label for="avatar" class="col-sm-2 col-form-label">Upload preview</label>
@@ -58,6 +86,10 @@ $avatarImg = file_exists($avatarDir . 'thumb_' . $user['avatar']) ? $webAvatarDi
         <div class="col-sm-2">
 
         </div>
+
+        <?php
+if (userCanUpdate()) {
+    ?>
         <div class="col-sm-2">
             <button class="btn btn-success">
 
@@ -66,9 +98,13 @@ $avatarImg = file_exists($avatarDir . 'thumb_' . $user['avatar']) ? $webAvatarDi
 
             </button>
         </div>
+        <?php
+}
+?>
+
         <div class="col-sm-2">
             <?php
-if ($user['id']) {
+if ($user['id'] && userCanDelete()) {
     ?>
             <a href="<?=$deleteUserUrl?>?id=<?=$user['id']?>&action=delete" onclick="return confirm('DELETE USER?')"
                 class="btn btn-danger">

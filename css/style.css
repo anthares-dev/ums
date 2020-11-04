@@ -1,5 +1,5 @@
 body {
-    font-family: 'Noto Sans', Georgia, Helvetica, sans-serif;
+    font-family: 'Noto Sans', Georgia, Helvetica, sans-serif; background-color: lightgrey;
 }
 
 main > .container {
@@ -98,3 +98,12 @@ caption{
     left: 10px; /*position where enlarged image should offset horizontally */
 
 }
+
+#loginform {
+  width: 60%;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+}
+

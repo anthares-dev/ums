@@ -7,11 +7,10 @@ $orderDir = $orderDir === 'ASC' ? 'DESC' : 'ASC';
 
 
 <table class="table table-striped table-dark table-bordered">
-    <caption>USERS LIST</caption>
 
     <thead>
         <tr>
-            <th colspan="6" class="text-center">TOTAL USERS <?=$totalUsers?> - Page <?=$page?> of <?=$numPages?>
+            <th colspan="8" class="text-center">TOTAL USERS <?=$totalUsers?> - Page <?=$page?> of <?=$numPages?>
             </th>
         </tr>
         <tr>
@@ -23,6 +22,10 @@ $orderDir = $orderDir === 'ASC' ? 'DESC' : 'ASC';
                 <a href="<?=$pageUrl?>?<?=$orderByQueryString?>&orderDir=<?=$orderDir?>&orderBy=username">
                     NAME
                 </a>
+            </th>
+            <th class="<?=$orderBy === 'roletype' ? $orderDirClass : ''?>">
+                <a href="<?=$pageUrl?>?<?=$orderByQueryString?>&orderDir=<?=$orderDir?>&orderBy=roletype">
+                    ROLE</a>
             </th>
             <th>
                 AVATAR
@@ -63,6 +66,7 @@ if ($users) {
         <tr>
             <td><?=$user['id']?></td>
             <td><?=$user['username']?></td>
+            <td><?=$user['roletype']?></td>
             <td>
                 <?php if ($avatarBigImg): ?>
                 <a href="<?=$avatarBigImg?>" target="_blank" class="thumbnail">
@@ -80,6 +84,7 @@ if ($users) {
             <td><?=$user['age']?></td>
             <td>
                 <div class="row">
+                    <?php if (userCanUpdate()): ?>
                     <div class="col-6">
                         <a class="btn btn-success"
                             href="<?=$updateUrl?>?<?=$navOrderByQueryString?>&page=<?=$page?>&id=<?=$user['id']?>&action=update">
@@ -87,6 +92,9 @@ if ($users) {
                             UPDATE
                         </a>
                     </div>
+                    <?php endif;?>
+
+                    <?php if (userCanDelete()): ?>
                     <div class="col-6">
                         <a onclick="return confirm('DELETE USER?')" class=" btn btn-danger"
                             href="
@@ -95,6 +103,7 @@ if ($users) {
                             DELETE
                         </a>
                     </div>
+                    <?php endif;?>
                 </div>
 
             </td>

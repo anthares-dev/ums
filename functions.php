@@ -4,6 +4,64 @@
 // per ottenere la var $mysqli
 require_once 'connection.php';
 
+function verifyLogin($email, $password, $token)
+{
+
+    require_once 'model/User.php';
+
+    $result = [
+        'message' => 'USER LOGGEN IN',
+        'success' => true,
+    ];
+
+    if ($token !== $_SESSION['csrf']) {
+        $result = [
+            'message' => 'TOKEN MISMATCH',
+            'success' => false,
+        ];
+        return $result;
+    }
+
+    $email = filter_var($email, FILTER_VALIDATE_EMAIL);
+
+    if (!$email) {
+        $result = [
+            'message' => 'WRONG EMAIL',
+            'success' => false,
+        ];
+        return $result;
+    }
+
+    if (strlen($password) < 4) {
+        $result = [
+            'message' => 'PASSWORD TOO SMALL',
+            'success' => false,
+        ];
+        return $result;
+    }
+
+    $resEmail = getUserByEmail($email);
+    if (!$resEmail) {
+        $result = [
+            'message' => 'USER NOT FOUND',
+            'success' => false,
+        ];
+        return $result;
+    }
+
+    if (!password_verify($password, $resEmail['password'])) {
+        $result = [
+            'message' => 'WRONG PASSWORD',
+            'success' => false,
+        ];
+        return $result;
+    }
+
+    $result['user'] = $resEmail;
+
+    return $result;
+}
+
 function getConfig($param, $default = null)
 {
     $config = require 'config.php';
@@ -184,7 +242,8 @@ function copyAvatar(int $userid)
 
     $FILE = $_FILES['avatar'];
     if (!is_uploaded_file($FILE['tmp_name'])) {
-        $result['message'] = 'NO FILE UPLOADED VIA HTTP POST';
+        $result['success'] = true;
+        $result['message'] = '';
         return $result;
     }
     $finfo = finfo_open(FILEINFO_MIME);
@@ -245,4 +304,41 @@ function removeOldAvatar(int $id, array $userData = null)
     if (file_exists($filenameThumb)) {
         unlink($filenameThumb);
     }
+}
+
+function isUserLoggedin()
+{
+    return $_SESSION['loggedin'] ?? false;
+
+}
+
+function getUserLoggedInFullname()
+{
+    return $_SESSION['userData']['username'] ?? '';
+}
+
+function getUserRole()
+{
+    return $_SESSION['userData']['roletype'] ?? '';
+}
+
+function getUserEmail()
+{
+    return $_SESSION['userData']['email'] ?? '';
+}
+
+function isUserAdmin()
+{
+    return getUserRole() === 'admin';
+}
+
+function userCanUpdate()
+{
+    $role = getUserRole();
+    return $role = 'admin' || $role === 'editor';
+}
+
+function userCanDelete()
+{
+    return isUserAdmin();
 }
